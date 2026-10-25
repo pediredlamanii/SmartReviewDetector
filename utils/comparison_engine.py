@@ -3,18 +3,23 @@ import random
 def clean_price(price_str):
     """
     Cleans a price string like '₹3,534' or '1,499.' into a float.
+    Returns 0.0 if not parseable.
     """
-    if not price_str or price_str == "Unknown Price":
+    if not price_str or price_str in ("Unknown Price", "Price unavailable", "N/A", "-"):
         return 0.0
-    
+
     cleaned = price_str.replace('₹', '').replace(',', '').strip()
+    # Remove trailing dot
     if cleaned.endswith('.'):
         cleaned = cleaned[:-1]
-    
+    # Remove decimal fraction if present (e.g. 1499.00 → 1499)
+    cleaned = cleaned.split('.')[0]
+
     try:
         return float(cleaned)
     except ValueError:
         return 0.0
+
 
 def format_price(price_float):
     """
@@ -41,7 +46,10 @@ def generate_comparison_data(scraped_product):
         base_rating = 4.0
         
     try:
-        base_reviews = int(scraped_product.get('reviews', '1000').replace(',', '').replace('(', '').replace(')', ''))
+        rev_str = scraped_product.get('reviews', '1000')
+        if not rev_str or rev_str in ('N/A', '-', ''):
+            rev_str = '1000'
+        base_reviews = int(rev_str.replace(',', '').replace('(', '').replace(')', ''))
     except ValueError:
         base_reviews = 1000
 
