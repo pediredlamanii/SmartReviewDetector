@@ -13,7 +13,7 @@ def scrape_amazon(url):
     }
     
     try:
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=headers, timeout=6)
         response.raise_for_status()
         
         soup = BeautifulSoup(response.content, 'html.parser')

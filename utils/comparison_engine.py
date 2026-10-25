@@ -61,7 +61,7 @@ def generate_comparison_data(scraped_product):
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
         search_url = f"https://www.bing.com/search?q=site:{domain}+{quote(query)}"
         try:
-            res = requests.get(search_url, headers=headers, timeout=5)
+            res = requests.get(search_url, headers=headers, timeout=3)
             if res.status_code == 200:
                 soup = BeautifulSoup(res.text, 'html.parser')
                 links = soup.select('li.b_algo h2 a')
