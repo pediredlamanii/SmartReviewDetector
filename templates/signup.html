@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up — SmartReviewDetector</title>
+    <meta name="description" content="Create a free SmartReviewDetector account to save your product analysis history.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Fallback for direct HTML viewing without Flask -->
+    <link rel="stylesheet" href="../static/css/style.css" onerror="this.onerror=null;this.href='static/css/style.css';">
+</head>
+<body class="light-mode auth-page">
+    <nav class="glass-nav">
+        <div class="logo">🛡️ SmartReviewDetector</div>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/detect">Review Analyzer</a></li>
+            <li><a href="/about">About</a></li>
+            {% if session.get('user_id') %}
+                <li><a href="/logout" class="btn-signup" style="background: linear-gradient(135deg,#ef4444,#dc2626) !important;">Logout</a></li>
+            {% else %}
+                <li><a href="/login">Login</a></li>
+                <li><a href="/signup" class="btn-signup active">Sign Up</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <main class="container auth-container">
+        <section class="auth-card glass-card">
+            <div class="auth-header">
+                <div class="auth-icon">✨</div>
+                <h2>Create Account</h2>
+                <p>Join free and start analyzing reviews</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <div class="flash-messages">
+                  {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+
+            <form action="/signup" method="POST" class="auth-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="Repeat your password" required>
+                </div>
+                <button type="submit" class="btn-primary auth-btn">Create Account →</button>
+            </form>
+
+            <p class="auth-footer">Already have an account? <a href="/login">Login here</a></p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-logo">🛡️ SmartReviewDetector</div>
+            <p>&copy; 2024 SmartReviewDetector — AI/ML Project</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Analyzer — SmartReviewDetector</title>
+    <meta name="description" content="Paste any review text and our AI NLP engine instantly detects whether it's genuine or fake, with a confidence score and reasoning.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="../static/css/style.css" onerror="this.onerror=null;this.href='static/css/style.css';">
+</head>
+<body class="light-mode">
+
+    <!-- ── Navigation ─────────────────────────────────────── -->
+    <nav class="glass-nav">
+        <div class="logo">🛡️ SmartReviewDetector</div>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/detect" class="active">Review Analyzer</a></li>
+            <li><a href="/about">About</a></li>
+            {% if session.get('user_id') %}
+                <li><a href="/logout" class="btn-signup" style="background: linear-gradient(135deg,#ef4444,#dc2626) !important;">Logout</a></li>
+            {% else %}
+                <li><a href="/login">Login</a></li>
+                <li><a href="/signup" class="btn-signup">Sign Up</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <main class="container">
+
+        <section class="detect-hero">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                NLP Engine · Real-Time Analysis
+            </div>
+            <h1>AI Review Analyzer</h1>
+            <p>Paste any product review below and our Natural Language Processing engine will classify it as <strong style="color:#34d399">Genuine</strong> or <strong style="color:#f87171">Fake</strong> in seconds — with confidence score &amp; reasoning.</p>
+        </section>
+
+        <section class="glass-card" style="max-width:680px; margin:0 auto 4rem; animation: fadeInUp 0.7s ease-out;">
+
+            <div style="margin-bottom:1.2rem;">
+                <label style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);display:block;margin-bottom:0.5rem;">📋 Review Text</label>
+                <textarea id="review-text" rows="6" placeholder="E.g. &quot;THIS PRODUCT IS AMAZING!!! BEST PURCHASE EVER!!! BUY IT NOW!!!&quot;" required style="width:100%;"></textarea>
+            </div>
+
+            <button id="detect-btn" class="btn-primary" style="width:100%;border-radius:var(--radius-sm);padding:0.95rem;">🤖 Analyze with AI</button>
+
+            <div id="loading" class="hidden" style="margin-top:1.5rem;">
+                <div class="spinner"></div>
+                <p>Running NLP models…</p>
+            </div>
+
+            <!-- Results -->
+            <div id="detect-result" class="hidden" style="margin-top:1.5rem;">
+                <h3>Analysis Result</h3>
+                <p>
+                    <strong>Verdict:</strong>&nbsp;
+                    <span id="nlp-prediction" style="font-size:1.1rem;font-weight:800;"></span>
+                </p>
+                <p><strong>Confidence Score:</strong>&nbsp;<span id="nlp-confidence"></span></p>
+                <p style="border-bottom:none;padding-bottom:0;"><strong>Reasoning:</strong>&nbsp;<span id="nlp-reason" style="color:var(--text-muted);"></span></p>
+            </div>
+        </section>
+
+        <!-- Info cards -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;max-width:760px;margin:0 auto 4rem;animation:fadeInUp 0.9s ease-out;">
+            <div class="feature-card" style="padding:1.5rem;">
+                <div class="feature-icon green" style="width:40px;height:40px;font-size:1.1rem;">🎯</div>
+                <h3 style="font-size:0.95rem;margin-bottom:0.4rem;">High Accuracy</h3>
+                <p style="font-size:0.82rem;">Trained on thousands of real and fake reviews with ~95% classification accuracy.</p>
+            </div>
+            <div class="feature-card" style="padding:1.5rem;">
+                <div class="feature-icon cyan" style="width:40px;height:40px;font-size:1.1rem;">💡</div>
+                <h3 style="font-size:0.95rem;margin-bottom:0.4rem;">Transparent Reasoning</h3>
+                <p style="font-size:0.82rem;">Every result includes an explanation of which linguistic signals triggered the verdict.</p>
+            </div>
+            <div class="feature-card" style="padding:1.5rem;">
+                <div class="feature-icon purple" style="width:40px;height:40px;font-size:1.1rem;">⚡</div>
+                <h3 style="font-size:0.95rem;margin-bottom:0.4rem;">Instant Results</h3>
+                <p style="font-size:0.82rem;">Analysis completes in under a second. No waiting, no loading, just results.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-logo">🛡️ SmartReviewDetector</div>
+            <p>&copy; 2024 SmartReviewDetector &mdash; AI/ML Project</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('detect-btn').addEventListener('click', function() {
+            const text = document.getElementById('review-text').value;
+            if (!text.trim()) {
+                alert('Please enter a review to analyze.');
+                return;
+            }
+
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('detect-result').classList.add('hidden');
+            this.disabled = true;
+
+            fetch('/analyze_review', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('detect-btn').disabled = false;
+
+                if (data.status === 'success') {
+                    const predEl = document.getElementById('nlp-prediction');
+                    predEl.textContent = data.prediction;
+                    predEl.className = data.css_class;
+
+                    document.getElementById('nlp-confidence').textContent = data.confidence;
+                    document.getElementById('nlp-reason').textContent = data.reason;
+                    document.getElementById('detect-result').classList.remove('hidden');
+                } else {
+                    alert(data.message || 'Error analyzing review');
+                }
+            })
+            .catch(err => {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('detect-btn').disabled = false;
+                alert('Server error. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>

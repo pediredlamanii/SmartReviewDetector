@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartReviewDetector — AI-Powered Fake Review Detection</title>
+    <meta name="description" content="Detect fake reviews instantly. Compare prices across Amazon & Flipkart. Get AI-powered trust scores for smarter shopping decisions.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Fallback for direct HTML viewing without Flask -->
+    <link rel="stylesheet" href="../static/css/style.css" onerror="this.onerror=null;this.href='static/css/style.css';">
+</head>
+<body class="light-mode">
+
+    <!-- ── Navigation ─────────────────────────────────────── -->
+    <nav class="glass-nav">
+        <div class="logo">🛡️ SmartReviewDetector</div>
+        <ul class="nav-links">
+            <li><a href="/" class="active">Home</a></li>
+            <li><a href="/detect">Review Analyzer</a></li>
+            <li><a href="/about">About</a></li>
+            {% if session.get('user_id') %}
+                <li><a href="/logout" class="btn-signup" style="background: linear-gradient(135deg,#ef4444,#dc2626) !important;">Logout</a></li>
+            {% else %}
+                <li><a href="/login">Login</a></li>
+                <li><a href="/signup" class="btn-signup">Sign Up</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <main class="container">
+
+        <!-- ── Hero ──────────────────────────────────────── -->
+        <section class="hero">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                AI &amp; NLP Powered &bull; Multi-Platform
+            </div>
+
+            <h1>Stop Buying Into<br>Fake Reviews</h1>
+            <p>SmartReviewDetector uses advanced Machine Learning &amp; NLP to detect fake reviews, compare prices across platforms, and give you a verified Trust Score — so you always shop smarter.</p>
+
+            <div class="input-group">
+                <input type="url" id="product-url" placeholder="Paste an Amazon or Flipkart product URL here…" required>
+                <button id="analyze-btn" class="btn-primary">🔍 Analyze Product</button>
+            </div>
+
+            <div id="loading" class="hidden">
+                <div class="spinner"></div>
+                <p>Analyzing product, comparing prices &amp; detecting fake reviews…</p>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">Detection Accuracy</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">2+</div>
+                    <div class="stat-label">Platforms Supported</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">NLP</div>
+                    <div class="stat-label">AI Analysis Engine</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">Free</div>
+                    <div class="stat-label">Always Free to Use</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── Features ──────────────────────────────────── -->
+        <section class="features-section">
+            <div class="section-header">
+                <span class="section-tag">✦ Core Features</span>
+                <h2>Everything you need for smarter shopping</h2>
+                <p>Each feature is powered by real AI — no manual guesswork, no outdated data.</p>
+            </div>
+
+            <div class="features">
+
+                <!-- Feature 1 -->
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Cross-Platform Price Search</h3>
+                    <p>Paste any product URL and we automatically find the same product on Amazon, Flipkart, and other major e-commerce platforms — giving you a side-by-side comparison.</p>
+                    <div class="feature-how">
+                        <div class="how-label">⚙ How it works</div>
+                        <p>Our scraper extracts the product name/ID, then searches across platforms using intelligent keyword matching to surface the best matches and their live prices.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card">
+                    <div class="feature-icon green">🤖</div>
+                    <h3>AI Fake Review Detection</h3>
+                    <p>Our NLP model scans every review for patterns typical of fake or paid reviews — excessive caps, repetitive phrasing, unusual sentiment spikes, and more.</p>
+                    <div class="feature-how">
+                        <div class="how-label">⚙ How it works</div>
+                        <p>Reviews are preprocessed using NLTK/spaCy, vectorized, and passed through a trained classifier (Scikit-Learn) that classifies each review as Genuine or Suspicious with a confidence score.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card">
+                    <div class="feature-icon cyan">🏆</div>
+                    <h3>Trust Score &amp; Recommendations</h3>
+                    <p>Every product gets a Trust Score (0–100%) that accounts for the percentage of fake reviews detected — so you see the real rating, not the inflated one.</p>
+                    <div class="feature-how">
+                        <div class="how-label">⚙ How it works</div>
+                        <p>Trust Score = Adjusted rating factoring in fake review percentage, total reviews, and cross-platform consistency. We then recommend the best platform for price and trust combined.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card">
+                    <div class="feature-icon purple">📊</div>
+                    <h3>Multi-Platform Comparison Table</h3>
+                    <p>See a clean, sortable table comparing the same product's price, star rating, review count, fake review %, and adjusted rating across all found platforms in one view.</p>
+                    <div class="feature-how">
+                        <div class="how-label">⚙ How it works</div>
+                        <p>After scraping each platform, results are normalized and aggregated into a unified comparison matrix. Color-coded indicators show which stats are good or concerning at a glance.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card">
+                    <div class="feature-icon orange">✍️</div>
+                    <h3>Single Review Text Analyzer</h3>
+                    <p>Have a specific review you're suspicious about? Paste any raw review text into our analyzer and get an instant verdict — Genuine or Fake — with reasoning and confidence.</p>
+                    <div class="feature-how">
+                        <div class="how-label">⚙ How it works</div>
+                        <p>The same NLP pipeline used for bulk analysis runs on your single review, explaining which linguistic signals (e.g. excessive exclamations, generic praise) triggered the verdict.</p>
+                    </div>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Secure User Accounts</h3>
+                    <p>Create a free account to save your analysis history and get personalized product reports. Your data is stored securely and never shared with third parties.</p>
+                    <div class="feature-how">
+                        <div class="how-label">⚙ How it works</div>
+                        <p>Authentication is handled via Flask sessions with password hashing. Your account keeps track of every product you've analyzed so you can revisit results anytime.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ── How it Works Steps ─────────────────────────── -->
+        <section class="how-it-works">
+            <div class="section-header">
+                <span class="section-tag">✦ Simple Process</span>
+                <h2>Get results in 4 easy steps</h2>
+                <p>From URL to full analysis in seconds — no setup needed.</p>
+            </div>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h4>Paste URL</h4>
+                    <p>Copy any Amazon or Flipkart product link and paste it into the search bar above.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h4>Scrape &amp; Search</h4>
+                    <p>We extract product details and search for it across multiple shopping platforms automatically.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h4>AI Analysis</h4>
+                    <p>Our NLP models classify each review as genuine or fake and compute platform-level trust scores.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h4>Smart Report</h4>
+                    <p>View a full comparison report with the best price, highest trust platform, and our recommendation.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── CTA ────────────────────────────────────────── -->
+        <section class="cta-banner">
+            <h2>Analyze a Review Right Now</h2>
+            <p>Have a specific review you're unsure about? Run our instant NLP analyzer — no URL needed.</p>
+            <a href="/detect" class="cta-btn">✍️ Open Review Analyzer →</a>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-logo">🛡️ SmartReviewDetector</div>
+            <p>&copy; 2024 SmartReviewDetector &mdash; AI/ML Project &bull; Built with Python, Flask &amp; NLP</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="../static/js/script.js" onerror="this.onerror=null;this.href='static/js/script.js';"></script>
+</body>
+</html>

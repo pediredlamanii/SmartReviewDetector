@@ -1,0 +1,29 @@
+# Virtual Environment
+venv/
+env/
+ENV/
+.env
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# SQLite Database (user credentials and local data)
+*.db
+*.sqlite3
+
+# Large scraped test/cache files
+*.html
+!templates/*.html
+
+# IDE / Editor folders
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
