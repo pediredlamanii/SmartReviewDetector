@@ -91,29 +91,17 @@ def generate_comparison_data(scraped_product):
     base_price = clean_price(scraped_product.get('price', '0'))
     raw_name = scraped_product.get('name', 'Product')
     
-    # If base price could not be scraped directly, infer from product identity
+    from utils.product_intelligence import get_product_intelligence
+    intel = get_product_intelligence(
+        original_url,
+        raw_title=raw_name,
+        current_price=scraped_product.get('price'),
+        current_rating=scraped_product.get('rating'),
+        current_reviews=scraped_product.get('reviews'),
+        current_image=scraped_product.get('image')
+    )
     if base_price <= 0:
-        name_lower = f"{raw_name} {original_url}".lower()
-        if 's25' in name_lower and 'ultra' in name_lower:
-            base_price = 88998.0
-        elif 's25' in name_lower and 'plus' in name_lower:
-            base_price = 79999.0
-        elif 's25' in name_lower:
-            base_price = 74999.0
-        elif 'iphone 16' in name_lower and ('pro max' in name_lower):
-            base_price = 144900.0
-        elif 'iphone 16' in name_lower and 'pro' in name_lower:
-            base_price = 119900.0
-        elif 'iphone 16' in name_lower:
-            base_price = 79900.0
-        elif 'iphone 15' in name_lower:
-            base_price = 64999.0
-        elif 's24' in name_lower and 'ultra' in name_lower:
-            base_price = 84999.0
-        elif 'oneplus 13' in name_lower or 'oneplus 12' in name_lower:
-            base_price = 64999.0
-        elif any(w in name_lower for w in ['phone', '5g', 'smartphone', 'gb']):
-            base_price = 39999.0
+        base_price = intel['price_val']
     
     try:
         r_val = scraped_product.get('rating', '4.5')
@@ -195,6 +183,10 @@ def generate_comparison_data(scraped_product):
                     sim_reviews = int(clean_rev) if clean_rev else base_reviews
                 except Exception:
                     sim_reviews = base_reviews
+            elif intel.get('amazon_comp_price') and platform == 'Amazon':
+                sim_price = clean_price(intel['amazon_comp_price'])
+                sim_rating = min(5.0, max(1.0, round(base_rating + random.uniform(-0.1, 0.1), 1)))
+                sim_reviews = max(20, int(base_reviews * random.uniform(0.8, 1.2)))
             elif base_price > 0:
                 # Realistic cross-platform market variance (within ±1.5% to ±3%)
                 variation = random.choice([-0.02, -0.01, 0.015, 0.025])

@@ -208,39 +208,23 @@ def scrape_amazon(url):
         except Exception as e:
             print(f"Error parsing Amazon HTML: {e}")
 
-    # ── Strategy 4: URL Slug Parser ─────────────────────────────────────
-    if not title:
-        title = parse_amazon_slug(url)
-
-    # ── Strategy 5: Smart Verified Catalog Fallback ─────────────────────
-    search_haystack = (f"{title or ''} {url}").lower()
-    for kp in KNOWN_PRODUCTS_AMAZON:
-        if all(kw in search_haystack for kw in kp['keywords']):
-            if not title or title == "Amazon Product":
-                title = kp['name']
-            if not price or price == "Price unavailable":
-                price = kp['price']
-            if not rating or rating == "N/A":
-                rating = kp['rating']
-            if not reviews or reviews == "N/A":
-                reviews = kp['reviews']
-            if not image_url:
-                image_url = kp['image']
-            break
-
-    # Defaults
-    title = title or "Amazon Product"
-    price = price or "Price unavailable"
-    rating = rating or "4.5"
-    reviews = reviews or "500"
-    image_url = image_url or "https://via.placeholder.com/160x160.png?text=Product"
+    # ── Strategy 4: Product Intelligence Engine (Guaranteed specs, pricing & authentic images) ──
+    from utils.product_intelligence import get_product_intelligence
+    intel = get_product_intelligence(
+        url,
+        raw_title=title,
+        current_price=price,
+        current_rating=rating,
+        current_reviews=reviews,
+        current_image=image_url
+    )
 
     return {
         'platform': 'Amazon',
-        'name': title,
-        'price': price,
-        'rating': rating,
-        'reviews': reviews,
-        'image': image_url,
+        'name': intel['name'],
+        'price': intel['price'],
+        'rating': intel['rating'],
+        'reviews': intel['reviews'],
+        'image': intel['image'],
         'status': 'success'
     }

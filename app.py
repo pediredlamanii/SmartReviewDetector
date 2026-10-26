@@ -26,14 +26,6 @@ init_db()
 def index():
     return render_template('index.html')
 
-@app.route('/debug_ip')
-def debug_ip():
-    target = request.args.get('url', 'https://www.flipkart.com/vivo-t4-lite-5g-titanium-gold-2026-4gb-64gb/p/itm49fb53d099f3c?pid=MOBHNCRK44PF7QEN')
-    try:
-        r = requests.get(target, headers={'User-Agent': 'WhatsApp/2.21.12.21 A', 'Accept': '*/*'}, timeout=4)
-        return jsonify({'status': r.status_code, 'len': len(r.text), 'snippet': r.text[:300]})
-    except Exception as e:
-        return jsonify({'error': str(e), 'type': type(e).__name__})
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
