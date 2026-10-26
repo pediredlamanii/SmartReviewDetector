@@ -74,6 +74,12 @@ def analyze():
         
     # Phase 5: Generate Comparison and Fake Review Data
     comparison_data = generate_comparison_data(product_data)
+
+    # Ensure main product card price is never 'Price unavailable' if comparison resolved a price
+    orig_table_item = next((item for item in comparison_data.get('table', []) if item['platform'] == platform), None)
+    if orig_table_item and (not product_data.get('price') or product_data.get('price') == "Price unavailable"):
+        if orig_table_item.get('price') and orig_table_item['price'] != "Price unavailable":
+            product_data['price'] = orig_table_item['price']
     
     return jsonify({
         "status": "success",
